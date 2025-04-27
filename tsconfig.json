@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "target": "es2017",                /* emit modern JS so Promise is built-in */
+      "module": "es6",                   /* or "esnext" depending on your bundler */
+      "lib": ["es2017", "dom"],          /* include the Promise API and browser types */
+      "strict": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,           /* allows default-import from commonjs modules */
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["app.ts"]
+  }
+  

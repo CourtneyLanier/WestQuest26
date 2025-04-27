@@ -1,0 +1,24 @@
+{
+  "name": "westquest26",
+  "version": "1.0.0",
+  "description": "Road Trip Planner",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CourtneyLanier/WestQuest26.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CourtneyLanier/WestQuest26/issues"
+  },
+  "homepage": "https://github.com/CourtneyLanier/WestQuest26#readme",
+  "dependencies": {
+    "@types/leaflet": "^1.9.17",
+    "leaflet": "^1.9.4"
+  }
+}
