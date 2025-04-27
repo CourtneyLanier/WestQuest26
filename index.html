@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roadtrip Itinerary App</title>
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Leaflet for map display -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <header>
+    <h1>Roadtrip Itinerary</h1>
+    <div id="totals">Total Hours: 0h</div>
+  </header>
+
+  <section class="controls">
+    <form id="itinerary-form">
+      <label>
+        Date<br>
+        <input type="date" id="date" required />
+      </label>
+      <label>
+        Start Location<br>
+        <input type="text" id="start" placeholder="Start address" required />
+      </label>
+      <label>
+        End Location<br>
+        <input type="text" id="end" placeholder="End address" required />
+      </label>
+      <label>
+        Hours Driven<br>
+        <input type="number" id="hours" placeholder="e.g. 5.5" required min="0" step="0.1" />
+      </label>
+      <button type="submit" id="submit-btn">Add</button>
+      <button type="button" id="cancel-edit" class="hidden">Cancel</button>
+    </form>
+  </section>
+
+  <section class="itinerary">
+    <ul id="itinerary-list"></ul>
+  </section>
+
+  <section class="map-container">
+    <div id="map"></div>
+  </section>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
