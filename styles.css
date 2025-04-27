@@ -1,14 +1,92 @@
-// styles.css
-body { margin: 0; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; }
-header { background: #004080; color: #fff; padding: 1rem; display: flex; justify-content: space-between; align-items: center; }
-nav { background: #f0f0f0; padding: 0.5rem; }
-nav button { margin-right: 0.5rem; }
-nav button.active { font-weight: bold; }
-main { flex: 1; overflow: auto; }
-.page { display: none; padding: 1rem; }
-.page.active { display: block; }
-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem; }
-#map { height: 300px; margin-top: 1rem; }
-ul { list-style: none; padding: 0; margin: 0; }
-li { display: flex; justify-content: space-between; padding: 0.5rem; border: 1px solid #ccc; margin-bottom: 0.5rem; }
-li button { margin-left: 0.5rem; }
+body {
+    margin: 0;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  header {
+    background: #004080;
+    color: #fff;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .header-left {
+    display: flex;
+    align-items: center;
+  }
+  .header-left .logo {
+    height: 40px;
+    margin-right: 0.5rem;
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+  }
+  nav {
+    background: #f0f0f0;
+    padding: 0.5rem;
+  }
+  nav button {
+    margin-right: 0.5rem;
+  }
+  nav button.active {
+    font-weight: bold;
+  }
+  main {
+    flex: 1;
+    overflow: auto;
+  }
+  .page {
+    display: none;
+    padding: 1rem;
+  }
+  .page.active {
+    display: block;
+  }
+  form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    margin-bottom: 0.5rem;
+  }
+  #map {
+    height: 300px;
+    margin-top: 1rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .header-left, .header-right {
+      width: 100%;
+      justify-content: space-between;
+    }
+    form {
+      grid-template-columns: 1fr;
+    }
+    nav {
+      display: flex;
+      overflow-x: auto;
+    }
+    #map {
+      height: 200px;
+    }
+  }

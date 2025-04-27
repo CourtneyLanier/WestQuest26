@@ -1,23 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roadtrip Planner</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WestQuestb 26</title>
+  <!-- App icons -->
+  <link rel="icon" href="WestQuest26Logo.png" sizes="32x32" type="image/png" />
+  <link rel="apple-touch-icon" href="WestQuest26Logo.png" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#004080" />
+
+  <link rel="stylesheet" href="styles.css" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
   <header>
-    <h1>Roadtrip Planner</h1>
-    <div id="totals">Total Hours: 0h</div>
-    <button id="undo-btn" disabled>Undo</button>
+    <div class="header-left">
+      <img src="WestQuest26Logo.png" alt="WestQuest26 Logo" class="logo" />
+      <h1>Roadtrip Planner</h1>
+    </div>
+    <div class="header-right">
+      <div id="totals">Total Hours: 0h</div>
+      <button id="undo-btn" disabled>Undo</button>
+    </div>
   </header>
   <nav id="nav">
-    <button data-page="Itenerary" class="active">Itinerary</button>
-    <button data-page="Meals">Meals</button>
-    <button data-page="POI">Points of Interest</button>
-    <button data-page="Hotels">Hotels</button>
+    <button data-page="itinerary" class="active">Itinerary</button>
+    <button data-page="meals">Meals</button>
+    <button data-page="poi">Points of Interest</button>
+    <button data-page="hotels">Hotels</button>
   </nav>
   <main>
     <section id="page-itinerary" class="page active">
