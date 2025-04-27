@@ -1,4 +1,4 @@
-import * as L from 'leaflet';
+"use strict";
 class RoadtripApp {
     constructor() {
         this.itinerary = [];
@@ -14,12 +14,7 @@ class RoadtripApp {
         this.initPoi();
         this.initHotels();
         this.initMap();
-        this.renderItinerary();
-        this.renderMeals();
-        this.renderPoi();
-        this.renderHotels();
-        this.updateTotals();
-        this.updateUndoButton();
+        this.renderAll();
     }
     loadState() {
         this.itinerary = JSON.parse(localStorage.getItem('itinerary') || '[]');
@@ -46,23 +41,20 @@ class RoadtripApp {
             return;
         this.history.pop();
         const prev = this.history.pop();
-        if (prev) {
-            const state = JSON.parse(prev);
-            this.itinerary = state.itinerary;
-            this.meals = state.meals;
-            this.pois = state.pois;
-            this.hotels = state.hotels;
-            this.saveState();
-            this.renderItinerary();
-            this.renderMeals();
-            this.renderPoi();
-            this.renderHotels();
-            this.updateTotals();
-            this.updateUndoButton();
-        }
+        if (!prev)
+            return;
+        const state = JSON.parse(prev);
+        this.itinerary = state.itinerary;
+        this.meals = state.meals;
+        this.pois = state.pois;
+        this.hotels = state.hotels;
+        this.saveState();
+        this.renderAll();
     }
     initUndo() {
-        document.getElementById('undo-btn').addEventListener('click', () => this.undo());
+        const btn = document.getElementById('undo-btn');
+        btn.addEventListener('click', () => this.undo());
+        this.updateUndoButton();
     }
     updateUndoButton() {
         document.getElementById('undo-btn').disabled = this.history.length < 2;
@@ -79,7 +71,16 @@ class RoadtripApp {
             });
         });
     }
-    // Itinerary
+    async geocode(addr) {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
+        const data = await res.json();
+        return data.length ? [parseFloat(data[0].lat), parseFloat(data[0].lon)] : [0, 0];
+    }
+    initMap() {
+        this.map = L.map('map').setView([39.5, -98.35], 4);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap contributors' }).addTo(this.map);
+        this.markers = L.layerGroup().addTo(this.map);
+    }
     initItinerary() {
         const form = document.getElementById('itinerary-form');
         form.addEventListener('submit', async (e) => {
@@ -130,17 +131,6 @@ class RoadtripApp {
         const total = this.itinerary.reduce((sum, it) => sum + it.hours, 0);
         (document.getElementById('totals')).textContent = `Total Hours: ${total.toFixed(1)}h`;
     }
-    async geocode(addr) {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(addr)}`);
-        const js = await res.json();
-        return js.length ? [parseFloat(js[0].lat), parseFloat(js[0].lon)] : [0, 0];
-    }
-    initMap() {
-        this.map = L.map('map').setView([39.5, -98.35], 4);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(this.map);
-        this.markers = L.layerGroup().addTo(this.map);
-    }
-    // Meals
     initMeals() {
         const form = document.getElementById('meals-form');
         form.addEventListener('submit', e => {
@@ -167,16 +157,15 @@ class RoadtripApp {
             ul.appendChild(li);
         });
     }
-    // POI
     initPoi() {
         const form = document.getElementById('poi-form');
         form.addEventListener('submit', e => {
             e.preventDefault();
             this.pushHistory();
             const name = document.getElementById('poi-name').value;
-            const loc = document.getElementById('poi-location').value;
+            const location = document.getElementById('poi-location').value;
             const notes = document.getElementById('poi-notes').value;
-            this.pois.push({ name, location: loc, notes });
+            this.pois.push({ name, location, notes });
             form.reset();
             this.saveState();
             this.renderPoi();
@@ -187,7 +176,7 @@ class RoadtripApp {
         ul.innerHTML = '';
         this.pois.forEach((p, i) => {
             const li = document.createElement('li');
-            li.textContent = `${p.name} (${p.location}) ${p.notes || ''}`;
+            li.textContent = `${p.name}: ${p.location} ${p.notes || ''}`;
             const del = document.createElement('button');
             del.textContent = 'Delete';
             del.addEventListener('click', () => { this.pushHistory(); this.pois.splice(i, 1); this.saveState(); this.renderPoi(); });
@@ -195,20 +184,19 @@ class RoadtripApp {
             ul.appendChild(li);
         });
     }
-    // Hotels
     initHotels() {
         const form = document.getElementById('hotels-form');
         form.addEventListener('submit', e => {
             e.preventDefault();
             this.pushHistory();
-            const ci = document.getElementById('hotel-checkin').value;
-            const co = document.getElementById('hotel-checkout').value;
+            const checkin = document.getElementById('hotel-checkin').value;
+            const checkout = document.getElementById('hotel-checkout').value;
             const name = document.getElementById('hotel-name').value;
-            const addr = document.getElementById('hotel-address').value;
+            const address = document.getElementById('hotel-address').value;
             const phone = document.getElementById('hotel-phone').value;
             const price = parseFloat(document.getElementById('hotel-price').value) || undefined;
             const conf = document.getElementById('hotel-conf').value;
-            this.hotels.push({ checkin: ci, checkout: co, name, address: addr, phone, price, conf });
+            this.hotels.push({ checkin, checkout, name, address, phone, price, conf });
             form.reset();
             this.saveState();
             this.renderHotels();
@@ -219,13 +207,20 @@ class RoadtripApp {
         ul.innerHTML = '';
         this.hotels.forEach((h, i) => {
             const li = document.createElement('li');
-            li.textContent = `${h.checkin}→${h.checkout}: ${h.name}, ${h.address}, ${h.phone || ''}, $${h.price || ''}, Conf:${h.conf || ''}`;
+            li.textContent = `${h.checkin} → ${h.checkout}: ${h.name}, ${h.address}, ${h.phone || ''}, $${h.price || ''}, Conf: ${h.conf || ''}`;
             const del = document.createElement('button');
             del.textContent = 'Delete';
             del.addEventListener('click', () => { this.pushHistory(); this.hotels.splice(i, 1); this.saveState(); this.renderHotels(); });
             li.appendChild(del);
             ul.appendChild(li);
         });
+    }
+    renderAll() {
+        this.renderItinerary();
+        this.renderMeals();
+        this.renderPoi();
+        this.renderHotels();
+        this.updateTotals();
     }
 }
 window.addEventListener('DOMContentLoaded', () => new RoadtripApp());
